@@ -7,8 +7,8 @@
 <% end %>
 
 <%= form_for @story do |f| %>
-  <%= radio_button_tag "choice", "1", :checked => true %><%= @words[0] %> <br />
-  <%= radio_button_tag "choice", "2" %><%= @words[1] %><br />
-  <%= radio_button_tag "choice", "3" %><%= @words[2] %><br />
+  <%= radio_button_tag "path", "0", :checked => true %><%= @words[0] %> <br />
+  <%= radio_button_tag "path", "1" %><%= @words[1] %><br />
+  <%= radio_button_tag "path", "2" %><%= @words[2] %><br />
   <%= f.submit %>
 <% end %>

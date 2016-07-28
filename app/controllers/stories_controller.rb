@@ -3,13 +3,13 @@ class StoriesController < ApplicationController
     @story = Story.new
     @story.save
     session['chapter'] = 0
-    save_next_chapters
+    save_next_chapters(@story, 1)
   end
 
   def edit
     @chapter = session['chapter'].to_i + 1
     @story = Story.find(params[:id])
-    if @choices = save_next_chapters
+    if @choices = save_next_chapters(@story, @chapter + 1)
       @words = get_choice_words(@choices)
       @choices = clean_passages(@choices)
     else
@@ -41,10 +41,21 @@ class StoriesController < ApplicationController
 
   private
 
-  def save_next_chapters
+  def save_next_chapters(story, chapter)
+    numbers = {
+      1 => "one",
+      2 => "two",
+      3 => "three",
+      4 => "four",
+      5 => "five",
+      6 => "six"
+    }
     scraper = RomanceCrawler.new
     choices = scraper.get_choices(3)
-    #session['choices'] = choices
+
+    story.update("#{numbers[chapter]}_a".to_sym => choices[0], "#{numbers[chapter]}_b".to_sym => choices[1], "#{numbers[chapter]}_c".to_sym => choices[2])
+
+    choices
   end
 
   def load_next_chapters
