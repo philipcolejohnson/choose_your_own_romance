@@ -90,11 +90,10 @@ class StoriesController < ApplicationController
 
   def save_beginning
     scraper = RomanceCrawler.new
+    session['names'] = SWNames.get_characters.join(",")
     passages = clean_passages([scraper.get_choices(1).first]).first
     passages = swap_names([passages]).first
     @story.update(one: passages)
-
-    session['names'] = SWNames.get_characters.join(",")
   end
 
   def save_next_chapters(story, chapter)
