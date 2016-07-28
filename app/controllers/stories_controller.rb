@@ -10,15 +10,18 @@ class StoriesController < ApplicationController
     @chapter = session['chapter'].to_i + 1
     @story = Story.find(params[:id])
     if @choices = save_next_chapters
+      @words = get_choice_words(@choices)
       @choices = clean_passages(@choices)
+    else
+      flash.now[:error] = "Something went wrong :("
+      render :index
     end
-    @words = get_choice_words(@choices)
-    next_chapters = save_next_chapters
   end
 
   def update
     @story = Story.find(params[:id])
     @story.update
+    next_chapter
     redirect_to :edit
   end
 
@@ -65,6 +68,10 @@ class StoriesController < ApplicationController
       choices[index] = passages[index].split(" ").sample
     end
     choices
+  end
+
+  def next_chapter
+    session['chapter'] = session['chapter'].to_i + 1
   end
 
 end
