@@ -109,6 +109,7 @@ class StoriesController < ApplicationController
     choices = scraper.get_choices(3)
 
     choices = swap_names(choices)
+    choices = clean_passages(choices)
 
     story.update("#{numbers[chapter]}_a".to_sym => choices[0],
                  "#{numbers[chapter]}_b".to_sym => choices[1],
@@ -165,7 +166,7 @@ class StoriesController < ApplicationController
     new_passages = []
     names = load_names
     puts names
-    names_regex = /[A-Z]([a-z]+|\.)(?:\s+[A-Z]([a-z]+|\.))*(?:\s+[a-z][a-z\-]+){0,2}\s+[A-Z]([a-z]+|\.)/
+    names_regex = /(?<!\W)\s[A-Z]\w*/
     passages.each do |passage|
       new_passages << passage.gsub(names_regex, " #{names.sample}")
     end
