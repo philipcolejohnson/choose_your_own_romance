@@ -1,12 +1,14 @@
+<h1>Chapter <%= @chapter %></h1>
+
 <% @choices.each do |story| %>
 <p>
-  <%= story %>
+  <%= story.html_safe %>
 </p>
 <% end %>
 
 <%= form_for @story do |f| %>
-  <%= radio_button_tag "choice", "1", :checked => true %>Choice 1 <br />
-  <%= radio_button_tag "choice", "2" %>Choice 2<br />
-  <%= radio_button_tag "choice", "3" %>Choice 3<br />
+  <%= radio_button_tag "choice", "1", :checked => true %><%= @words[0] %> <br />
+  <%= radio_button_tag "choice", "2" %><%= @words[1] %><br />
+  <%= radio_button_tag "choice", "3" %><%= @words[2] %><br />
   <%= f.submit %>
 <% end %>

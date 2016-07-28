@@ -1,10 +1,10 @@
 require 'mechanize'
 
 class RomanceCrawler
-  
+
   def initialize
     @scraper = Mechanize.new
-    @scraper.history_added = Proc.new { sleep 0.5 }
+    @scraper.history_added = Proc.new { sleep 0.1 }
   end
 
   def scrape
