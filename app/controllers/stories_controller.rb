@@ -6,6 +6,9 @@ class StoriesController < ApplicationController
 
   def edit
     @story = Story.find(params[:id])
+    scraper = RomanceCrawler.new
+    @choices = scraper.get_choices(3)
+    p @choices[0]
   end
 
   def update

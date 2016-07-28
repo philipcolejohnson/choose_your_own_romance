@@ -1,6 +1,8 @@
+<% @choices.each do |story| %>
 <p>
-  The story goes here.
+  <%= story %>
 </p>
+<% end %>
 
 <%= form_for @story do |f| %>
   <%= radio_button_tag "choice", "1", :checked => true %>Choice 1 <br />

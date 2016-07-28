@@ -30,6 +30,7 @@ group :development do
   gem "better_errors"
 end
 gem "binding_of_caller"
+gem 'mechanize'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
