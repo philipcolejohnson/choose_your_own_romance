@@ -1,0 +1,10 @@
+<h1>The Canon</h1>
+
+<%= link_to "The saga continues", new_story_path %>
+<ul>
+<% @stories.each do |story| %>
+  <li>
+    <%= story.id %> | <%= link_to "Delete Story", story_path(story), method: :delete, data: {confirm: "Are you sure?"} %>
+  </li>
+<% end %>
+</ul>

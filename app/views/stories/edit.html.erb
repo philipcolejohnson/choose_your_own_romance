@@ -1,0 +1,10 @@
+<p>
+  The story goes here.
+</p>
+
+<%= form_for @story do |f| %>
+  <%= radio_button_tag "choice", "1", :checked => true %>Choice 1 <br />
+  <%= radio_button_tag "choice", "2" %>Choice 2<br />
+  <%= radio_button_tag "choice", "3" %>Choice 3<br />
+  <%= f.submit %>
+<% end %>
