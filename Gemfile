@@ -32,6 +32,7 @@ group :development do
 end
 gem "binding_of_caller"
 gem 'mechanize'
+gem 'tatooine'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

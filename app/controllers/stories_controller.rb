@@ -61,7 +61,8 @@ class StoriesController < ApplicationController
       5 => "five",
       6 => "six"
     }
-    @story.update("#{numbers[@chapter]}_choice".to_sym => params[:path], "#{numbers[@chapter]}".to_sym => get_chapter_text(@story, @chapter))
+    @story.update("#{numbers[@chapter]}_choice".to_sym => params[:path],
+                  "#{numbers[@chapter]}".to_sym => get_chapter_text(@story, @chapter))
   end
 
   def get_chapter_text(story, chapter)
@@ -89,7 +90,11 @@ class StoriesController < ApplicationController
 
   def save_beginning
     scraper = RomanceCrawler.new
-    @story.update(one: clean_passages([scraper.get_choices(1).first]).first)
+    passages = clean_passages([scraper.get_choices(1).first]).first
+    passages = swap_names([passages]).first
+    @story.update(one: passages)
+
+    session['names'] = SWNames.get_characters.join(",")
   end
 
   def save_next_chapters(story, chapter)
@@ -103,6 +108,9 @@ class StoriesController < ApplicationController
     }
     scraper = RomanceCrawler.new
     choices = scraper.get_choices(3)
+
+    choices = swap_names(choices)
+
     story.update("#{numbers[chapter]}_a".to_sym => choices[0],
                  "#{numbers[chapter]}_b".to_sym => choices[1],
                  "#{numbers[chapter]}_c".to_sym => choices[2])
@@ -150,5 +158,18 @@ class StoriesController < ApplicationController
     session['chapter'] = session['chapter'].to_i + 1
   end
 
+  def load_names
+    session['names'].split(',')
+  end
 
+  def swap_names(passages)
+    new_passages = []
+    names = load_names
+    puts names
+    names_regex = /[A-Z]([a-z]+|\.)(?:\s+[A-Z]([a-z]+|\.))*(?:\s+[a-z][a-z\-]+){0,2}\s+[A-Z]([a-z]+|\.)/
+    passages.each do |passage|
+      new_passages << passage.gsub(names_regex, " #{names.sample}")
+    end
+    new_passages
+  end
 end
