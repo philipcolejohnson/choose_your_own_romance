@@ -12,7 +12,11 @@ class RomanceCrawler
       chapter = (4..6).to_a.sample
       page = @scraper.get(make_url)
       chapters = page.links_with(text: "Read")[book].click
-      story_page = chapters.links[chapter].click.links_with(text: " Next Page").first.click
+      begin
+        story_page = chapters.links[chapter].click.links_with(text: " Next Page").first.click
+      rescue Mechanize::UnsupportedSchemeError
+        story_page = chapters.links[0].click.links_with(text: " Next Page").first.click
+      end
       story_page.search("section#text").css("p").text
   end
 

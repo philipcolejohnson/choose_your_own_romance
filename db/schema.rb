@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160728185423) do
+ActiveRecord::Schema.define(version: 20160728211151) do
 
   create_table "stories", force: :cascade do |t|
     t.text     "one"
@@ -41,6 +41,10 @@ ActiveRecord::Schema.define(version: 20160728185423) do
     t.text     "five_b"
     t.text     "five_c"
     t.integer  "five_choice"
+    t.text     "six_a"
+    t.text     "six_b"
+    t.text     "six_c"
+    t.integer  "six_choice"
   end
 
 end

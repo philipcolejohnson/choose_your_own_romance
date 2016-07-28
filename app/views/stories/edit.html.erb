@@ -1,14 +1,16 @@
 <h1>Chapter <%= @chapter %></h1>
 
-<% @choices.each do |story| %>
 <p>
-  <%= story.html_safe %>
+  <%= @current_chapter.html_safe %>
 </p>
-<% end %>
+
+<p>
+  <strong>Which word makes the Force grow strong in you?</strong>
+</p>
 
 <%= form_for @story do |f| %>
-  <%= radio_button_tag "path", "0", :checked => true %><%= @words[0] %> <br />
-  <%= radio_button_tag "path", "1" %><%= @words[1] %><br />
-  <%= radio_button_tag "path", "2" %><%= @words[2] %><br />
+  <%= radio_button_tag "path", "1", :checked => true %><%= @words[0] %> <br />
+  <%= radio_button_tag "path", "2" %><%= @words[1] %><br />
+  <%= radio_button_tag "path", "3" %><%= @words[2] %><br />
   <%= f.submit %>
 <% end %>

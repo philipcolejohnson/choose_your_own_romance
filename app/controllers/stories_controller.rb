@@ -2,27 +2,38 @@ class StoriesController < ApplicationController
   def new
     @story = Story.new
     @story.save
-    session['chapter'] = 0
-    save_next_chapters(@story, 1)
+    session['chapter'] = 1
+    save_beginning
   end
 
   def edit
-    @chapter = session['chapter'].to_i + 1
+    @chapter = session['chapter'].to_i
     @story = Story.find(params[:id])
-    if @choices = save_next_chapters(@story, @chapter + 1)
+    save_next_chapters(@story, @chapter + 1) # unless @chapter == 6
+
+    if @chapter == 1
+      @current_chapter = @story.one
+    else
+      @current_chapter = get_chapter_text(@story, @chapter)
+    end
+
+    # if @chapter < 6
+      @choices = save_next_chapters(@story, @chapter + 1)
       @words = get_choice_words(@choices)
       @choices = clean_passages(@choices)
-    else
-      flash.now[:error] = "Something went wrong :("
-      render :index
-    end
+    # end
   end
 
   def update
+    @chapter = session['chapter'].to_i
     @story = Story.find(params[:id])
-    @story.update
-    next_chapter
-    redirect_to :edit
+    save_choice
+    if @chapter < 5
+      next_chapter
+      redirect_to edit_story_path(@story)
+    else
+      redirect_to story_path(@story)
+    end
   end
 
   def show
@@ -41,6 +52,46 @@ class StoriesController < ApplicationController
 
   private
 
+  def save_choice
+    numbers = {
+      1 => "one",
+      2 => "two",
+      3 => "three",
+      4 => "four",
+      5 => "five",
+      6 => "six"
+    }
+    @story.update("#{numbers[@chapter]}_choice".to_sym => params[:path], "#{numbers[@chapter]}".to_sym => get_chapter_text(@story, @chapter))
+  end
+
+  def get_chapter_text(story, chapter)
+    numbers = {
+      1 => "one",
+      2 => "two",
+      3 => "three",
+      4 => "four",
+      5 => "five",
+      6 => "six"
+    }
+
+    return story.one if chapter == 1
+
+    case story.send("#{numbers[chapter - 1]}_choice".to_sym)
+    when 1
+      text = story.send("#{numbers[chapter]}_a".to_sym)
+    when 2
+      text = story.send("#{numbers[chapter]}_b".to_sym)
+    when 3
+      text = story.send("#{numbers[chapter]}_c".to_sym)
+    end
+    text
+  end
+
+  def save_beginning
+    scraper = RomanceCrawler.new
+    @story.update(one: clean_passages([scraper.get_choices(1).first]).first)
+  end
+
   def save_next_chapters(story, chapter)
     numbers = {
       1 => "one",
@@ -52,14 +103,28 @@ class StoriesController < ApplicationController
     }
     scraper = RomanceCrawler.new
     choices = scraper.get_choices(3)
-
-    story.update("#{numbers[chapter]}_a".to_sym => choices[0], "#{numbers[chapter]}_b".to_sym => choices[1], "#{numbers[chapter]}_c".to_sym => choices[2])
+    story.update("#{numbers[chapter]}_a".to_sym => choices[0],
+                 "#{numbers[chapter]}_b".to_sym => choices[1],
+                 "#{numbers[chapter]}_c".to_sym => choices[2])
 
     choices
   end
 
-  def load_next_chapters
-    #session['choices']
+  def load_chapter(story, chapter)
+    numbers = {
+      1 => "one",
+      2 => "two",
+      3 => "three",
+      4 => "four",
+      5 => "five",
+      6 => "six"
+    }
+    choices = []
+    p story.send("#{numbers[chapter]}_a".to_sym)
+    choices << story.send("#{numbers[chapter]}_a".to_sym)
+    choices << story.send("#{numbers[chapter]}_b".to_sym)
+    choices << story.send("#{numbers[chapter]}_c".to_sym)
+    choices
   end
 
   def strip_text(text)
@@ -84,5 +149,6 @@ class StoriesController < ApplicationController
   def next_chapter
     session['chapter'] = session['chapter'].to_i + 1
   end
+
 
 end
